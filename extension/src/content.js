@@ -79,13 +79,12 @@ function injectRewrite(bodyEl, rewrittenText) {
     }
     .unf-rewrite-label {
       font-size: 11px;
-      color: #a89f8e;
+      color: #ffffff;
       margin-bottom: 4px;
     }
     .unf-rewrite {
-      border-left: 3px solid #a89f8e;
       padding: 8px 12px;
-      background: #faf9f5;
+      background: #ffffff;
       border-radius: 0 4px 4px 0;
       font-style: italic;
       color: #4a4a4a;
