@@ -19,8 +19,29 @@ async function renderStats() {
   `;
 }
 
+async function loadSettings() {
+  const { humorMode = "darkHumor", aiEnabled = true } = await chrome.storage.local.get([
+    "humorMode",
+    "aiEnabled",
+  ]);
+
+  document.getElementById("humorMode").value = humorMode;
+  document.getElementById("aiEnabled").checked = aiEnabled;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   renderStats();
+  loadSettings();
+
+  // humor mode selector
+  document.getElementById("humorMode").addEventListener("change", async (e) => {
+    await chrome.storage.local.set({ humorMode: e.target.value });
+  });
+
+  // AI toggle
+  document.getElementById("aiEnabled").addEventListener("change", async (e) => {
+    await chrome.storage.local.set({ aiEnabled: e.target.checked });
+  });
 
   // re-render when storage changes (rejection detected while popup is open)
   chrome.storage.onChanged.addListener(renderStats);

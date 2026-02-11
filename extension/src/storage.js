@@ -10,6 +10,7 @@ const DEFAULTS = {
   streak: 0,
   rewriteCache: {},
   humorMode: "darkHumor",
+  aiEnabled: true,
 };
 
 export async function getState() {

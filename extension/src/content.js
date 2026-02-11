@@ -44,6 +44,7 @@ function checkForEmails() {
     // Pre-check if likely rejection to show loading immediately
     let loadingContainer = null;
     if (body.toLowerCase().includes("unfortunately") || body.toLowerCase().includes("regret")) {
+      console.log("[unf] showing loading emoji");
       loadingContainer = injectLoading(bodyEl);
     }
 
@@ -79,10 +80,20 @@ function checkForEmails() {
             updateWithError(errorContainer);
           }
         }
-      }
-
-      if (response.type === "ACCEPTANCE") {
+      } else if (response.type === "ACCEPTANCE") {
         celebrate(response.streak);
+        // Remove loading if shown
+        if (loadingContainer) {
+          loadingContainer.remove();
+          bodyEl.style.display = "";
+        }
+      } else {
+        // type === "NONE" - not a rejection/acceptance, remove loading
+        console.log("[unf] not a rejection/acceptance, removing loading");
+        if (loadingContainer) {
+          loadingContainer.remove();
+          bodyEl.style.display = "";
+        }
       }
     });
   });

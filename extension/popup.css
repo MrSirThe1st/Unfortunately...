@@ -14,7 +14,7 @@ body {
 }
 
 #popup {
-  width: 260px;
+  width: 280px;
   padding: 20px;
   min-height: 120px;
 }
@@ -24,7 +24,62 @@ body {
   font-weight: 400;
   color: #6b6b6b;
   letter-spacing: 0.5px;
+  margin-bottom: 20px;
+}
+
+.section {
   margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e0ddd5;
+}
+
+.section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.section-label {
+  display: block;
+  font-size: 11px;
+  color: #8a8a8a;
+  letter-spacing: 0.3px;
+  text-transform: lowercase;
+  margin-bottom: 8px;
+}
+
+.humor-select {
+  width: 100%;
+  padding: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #3a3a3a;
+  background: #ffffff;
+  border: 1px solid #d0cdc5;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.humor-select:focus {
+  outline: none;
+  border-color: #a89f8e;
+}
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-container input[type="checkbox"] {
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.toggle-label {
+  font-size: 13px;
+  color: #5a5a5a;
 }
 
 #stats {
@@ -36,11 +91,10 @@ body {
   justify-content: space-between;
   align-items: baseline;
   padding: 6px 0;
-  border-bottom: 1px solid #e0ddd5;
 }
 
-.stat:last-child {
-  border-bottom: none;
+.stat:first-child {
+  padding-top: 0;
 }
 
 .stat-label {

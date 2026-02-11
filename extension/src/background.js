@@ -39,6 +39,11 @@ async function handleRejection(messageId, body) {
     streak: state.streak + 1,
   });
 
+  // if AI disabled, return null (no rewrite)
+  if (!state.aiEnabled) {
+    return null;
+  }
+
   // return cached rewrite if we have one
   if (state.rewriteCache[messageId]) {
     return state.rewriteCache[messageId];

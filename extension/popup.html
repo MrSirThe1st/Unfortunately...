@@ -9,7 +9,26 @@
 <body>
   <div id="popup">
     <h1 class="logo">unfortunately…</h1>
-    <div id="stats">
+
+    <div class="section">
+      <label class="section-label">humor mode</label>
+      <select id="humorMode" class="humor-select">
+        <option value="darkHumor">dark humor</option>
+        <option value="meanButFair">mean but fair</option>
+        <option value="internetBrainrot">internet brainrot</option>
+        <option value="copium">copium</option>
+        <option value="techDevTrauma">tech dev trauma</option>
+      </select>
+    </div>
+
+    <div class="section">
+      <label class="toggle-container">
+        <input type="checkbox" id="aiEnabled" checked>
+        <span class="toggle-label">AI rewrites enabled</span>
+      </label>
+    </div>
+
+    <div id="stats" class="section">
       <!-- populated by popup.js -->
     </div>
   </div>
