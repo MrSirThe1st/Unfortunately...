@@ -40,11 +40,40 @@ function checkForEmails() {
     const subject = subjectEl ? subjectEl.innerText.trim() : "";
 
     processed.add(id);
+
+    // Pre-check if likely rejection to show loading immediately
+    let loadingContainer = null;
+    if (body.toLowerCase().includes("unfortunately") || body.toLowerCase().includes("regret")) {
+      loadingContainer = injectLoading(bodyEl);
+    }
+
     sendToBackground({ messageId: id, subject, body }, (response) => {
-      if (!response) return;
-      if (response.type === "REJECTION" && response.rewrittenText) {
-        injectRewrite(bodyEl, response.rewrittenText);
+      if (!response) {
+        // API error - show funny error
+        if (loadingContainer) {
+          updateWithError(loadingContainer);
+        }
+        return;
       }
+
+      if (response.type === "REJECTION") {
+        if (response.rewrittenText) {
+          if (loadingContainer) {
+            updateWithRewrite(loadingContainer, bodyEl, response.rewrittenText);
+          } else {
+            injectRewrite(bodyEl, response.rewrittenText);
+          }
+        } else {
+          // API failed to generate rewrite
+          if (loadingContainer) {
+            updateWithError(loadingContainer);
+          } else {
+            const errorContainer = injectLoading(bodyEl);
+            updateWithError(errorContainer);
+          }
+        }
+      }
+
       if (response.type === "ACCEPTANCE") {
         celebrate(response.streak);
       }
@@ -124,6 +153,114 @@ function injectRewrite(bodyEl, rewrittenText) {
   shadow.appendChild(wrapper);
 
   bodyEl.parentNode.insertBefore(container, bodyEl);
+}
+
+function injectLoading(bodyEl) {
+  bodyEl.style.display = "none";
+
+  const container = document.createElement("div");
+  const shadow = container.attachShadow({ mode: "open" });
+
+  const style = document.createElement("style");
+  style.textContent = `
+    .unf-loading {
+      padding: 12px;
+      text-align: center;
+      font-size: 24px;
+    }
+  `;
+
+  const loading = document.createElement("div");
+  loading.className = "unf-loading";
+  loading.textContent = "😂";
+
+  shadow.appendChild(style);
+  shadow.appendChild(loading);
+  bodyEl.parentNode.insertBefore(container, bodyEl);
+
+  return container;
+}
+
+function updateWithRewrite(container, bodyEl, rewrittenText) {
+  const shadow = container.shadowRoot;
+  shadow.innerHTML = "";
+
+  const style = document.createElement("style");
+  style.textContent = `
+    .unf-rewrite-wrapper {
+      margin: 4px 0 8px;
+    }
+    .unf-rewrite-label {
+      font-size: 11px;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+    .unf-rewrite {
+      padding: 8px 12px;
+      background: #ffffff;
+      border-radius: 0 4px 4px 0;
+      font-style: italic;
+      color: #4a4a4a;
+    }
+    .unf-show-original {
+      background: none;
+      border: none;
+      color: #a89f8e;
+      font-size: 11px;
+      font-family: inherit;
+      cursor: pointer;
+      padding: 4px 0;
+    }
+    .unf-show-original:hover {
+      color: #6b6b6b;
+    }
+  `;
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "unf-rewrite-wrapper";
+  wrapper.innerHTML = `
+    <div class="unf-rewrite-label">unfortunately… rewrote this</div>
+    <div class="unf-rewrite">${escapeHtml(rewrittenText)}</div>
+    <button class="unf-show-original">show original</button>
+  `;
+
+  let showingOriginal = false;
+  wrapper.querySelector(".unf-show-original").addEventListener("click", () => {
+    showingOriginal = !showingOriginal;
+    bodyEl.style.display = showingOriginal ? "" : "none";
+    wrapper.querySelector(".unf-show-original").textContent = showingOriginal
+      ? "hide original"
+      : "show original";
+  });
+
+  shadow.appendChild(style);
+  shadow.appendChild(wrapper);
+}
+
+function updateWithError(container) {
+  const shadow = container.shadowRoot;
+  shadow.innerHTML = "";
+
+  const style = document.createElement("style");
+  style.textContent = `
+    .unf-error {
+      padding: 8px 12px;
+      background: #faf9f5;
+      border-left: 3px solid #a89f8e;
+      border-radius: 0 4px 4px 0;
+      color: #6b6b6b;
+      font-size: 13px;
+      font-style: italic;
+      margin: 4px 0 8px;
+    }
+  `;
+
+  const error = document.createElement("div");
+  error.className = "unf-error";
+  error.textContent = "unfortunately… the AI is having an existential crisis and couldn't rewrite this. the irony is not lost on us.";
+
+  shadow.appendChild(style);
+  shadow.appendChild(error);
 }
 
 // debounced observer — Gmail fires mutations rapidly on SPA navigation
