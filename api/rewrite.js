@@ -55,6 +55,12 @@ export default async function handler(req, res) {
     return res.status(429).json({ error: "rate limit exceeded", success: false });
   }
 
+  // Debug: check if API key exists
+  if (!process.env.AI_API_KEY) {
+    console.error("[unfortunately] AI_API_KEY not found in env");
+    return res.status(500).json({ error: "API key not configured", success: false });
+  }
+
   try {
     const response = await client.chat.completions.create({
       model: "gpt-4o-mini",
