@@ -1,4 +1,4 @@
-import OpenAI from "openai";
+import { OpenAI } from "openai";
 import { getSystemPrompt } from "../prompts/system.js";
 import { buildRewritePrompt } from "../prompts/template.js";
 
