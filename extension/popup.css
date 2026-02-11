@@ -1,0 +1,56 @@
+/* popup.css — popup styles only, not injected into Gmail */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: #f0efe8;
+  color: #3a3a3a;
+  font-size: 14px;
+}
+
+#popup {
+  width: 260px;
+  padding: 20px;
+  min-height: 120px;
+}
+
+.logo {
+  font-size: 18px;
+  font-weight: 400;
+  color: #6b6b6b;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+}
+
+#stats {
+  color: #5a5a5a;
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 6px 0;
+  border-bottom: 1px solid #e0ddd5;
+}
+
+.stat:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #8a8a8a;
+  letter-spacing: 0.3px;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 300;
+  color: #3a3a3a;
+}

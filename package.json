@@ -1,0 +1,11 @@
+{
+  "name": "unfortunately-proxy",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "openai": "^1.0.0"
+  }
+}
