@@ -4,8 +4,7 @@
 import { detectEmail } from "./detection.js";
 import { getState, setState } from "./storage.js";
 
-// update to your Vercel URL before shipping
-const PROXY_URL = "http://localhost:3000";
+const PROXY_URL = "https://unfortunately-six.vercel.app";
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.type !== "EMAIL_DETECTED") return false;
@@ -68,10 +67,6 @@ async function handleAcceptance() {
 }
 
 async function callProxy(text, humorMode) {
-  // TEMP: mock rewrite for testing before API is deployed
-  return "lol they said no again. their loss honestly.";
-
-  /* TODO: uncomment when API deployed and update PROXY_URL to your Vercel domain
   try {
     const res = await fetch(`${PROXY_URL}/api/rewrite`, {
       method: "POST",
@@ -80,8 +75,8 @@ async function callProxy(text, humorMode) {
     });
     const data = await res.json();
     return data.success ? data.rewrittenText : null;
-  } catch {
+  } catch (err) {
+    console.error("[unf] API call failed:", err);
     return null;
   }
-  */
 }
