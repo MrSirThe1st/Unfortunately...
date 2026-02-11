@@ -48,8 +48,11 @@ function checkForEmails() {
     }
 
     sendToBackground({ messageId: id, subject, body }, (response) => {
+      console.log("[unf] response received:", response);
+
       if (!response) {
         // API error - show funny error
+        console.log("[unf] no response from background");
         if (loadingContainer) {
           updateWithError(loadingContainer);
         }
@@ -57,14 +60,18 @@ function checkForEmails() {
       }
 
       if (response.type === "REJECTION") {
+        console.log("[unf] rejection detected, rewrittenText:", !!response.rewrittenText);
         if (response.rewrittenText) {
           if (loadingContainer) {
+            console.log("[unf] updating loading container with rewrite");
             updateWithRewrite(loadingContainer, bodyEl, response.rewrittenText);
           } else {
+            console.log("[unf] injecting rewrite (no loading container)");
             injectRewrite(bodyEl, response.rewrittenText);
           }
         } else {
           // API failed to generate rewrite
+          console.log("[unf] no rewritten text, showing error");
           if (loadingContainer) {
             updateWithError(loadingContainer);
           } else {
