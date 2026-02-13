@@ -3,7 +3,8 @@
 //   rejectionCount: number
 //   streak: number
 //   rewriteCache: { [messageId]: rewrittenText } — last 20 rewrites
-//   humorMode: "darkHumor" | "meanButFair" | "internetBrainrot" | "copium" | "techDevTrauma"
+//   humorMode: "darkHumor" | "meanButFair" | "internet" | "copium" | "techDevTrauma" | "trump" | "philosophy" | "christian"
+//   intensity: "low" | "medium" | "high" | "extreme" — only for modes that support it
 
 const DEFAULTS = {
   rejectionCount: 0,
@@ -11,6 +12,7 @@ const DEFAULTS = {
   rewriteCache: {},
   humorMode: "darkHumor",
   aiEnabled: true,
+  intensity: "medium",
 };
 
 export async function getState() {

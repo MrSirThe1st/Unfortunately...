@@ -4,7 +4,7 @@ import { buildRewritePrompt } from "../prompts/template.js";
 
 const client = new OpenAI({ apiKey: process.env.AI_API_KEY });
 
-const VALID_MODES = ["darkHumor", "meanButFair", "internetBrainrot", "copium", "techDevTrauma"];
+const VALID_MODES = ["darkHumor", "meanButFair", "internet", "copium", "techDevTrauma", "trump", "philosophy", "christian"];
 const MAX_CALLS = parseInt(process.env.MAX_CALLS_PER_DAY || "50", 10);
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -41,7 +41,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "method not allowed", success: false });
   }
 
-  const { text, humorMode } = req.body || {};
+  const { text, humorMode, intensity = "medium" } = req.body || {};
 
   if (!text || typeof text !== "string" || text.trim().length === 0) {
     return res.status(400).json({ error: "text is required", success: false });
@@ -65,7 +65,7 @@ export default async function handler(req, res) {
     const response = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: getSystemPrompt(humorMode) },
+        { role: "system", content: getSystemPrompt(humorMode, intensity) },
         { role: "user", content: buildRewritePrompt(text.trim()) },
       ],
       max_tokens: 300,

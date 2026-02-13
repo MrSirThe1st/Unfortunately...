@@ -50,7 +50,7 @@ async function handleRejection(messageId, body) {
   }
 
   // call proxy for rewrite
-  const rewrittenText = await callProxy(body, state.humorMode);
+  const rewrittenText = await callProxy(body, state.humorMode, state.intensity);
   if (!rewrittenText) return null;
 
   // cache it, cap at 20 entries
@@ -71,12 +71,12 @@ async function handleAcceptance() {
   return streak;
 }
 
-async function callProxy(text, humorMode) {
+async function callProxy(text, humorMode, intensity) {
   try {
     const res = await fetch(`${PROXY_URL}/api/rewrite`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, humorMode }),
+      body: JSON.stringify({ text, humorMode, intensity }),
     });
     const data = await res.json();
     return data.success ? data.rewrittenText : null;

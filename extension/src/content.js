@@ -132,9 +132,7 @@ function injectRewrite(bodyEl, rewrittenText) {
     .unf-rewrite {
       padding: 8px 12px;
       background: #ffffff;
-      border-radius: 0 4px 4px 0;
       font-style: italic;
-      color: #4a4a4a;
     }
     .unf-show-original {
       background: none;
@@ -263,9 +261,7 @@ function updateWithError(container) {
   style.textContent = `
     .unf-error {
       padding: 8px 12px;
-      background: #faf9f5;
-      border-left: 3px solid #a89f8e;
-      border-radius: 0 4px 4px 0;
+      background: #ffffff;
       color: #6b6b6b;
       font-size: 13px;
       font-style: italic;
