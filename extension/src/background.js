@@ -49,8 +49,8 @@ async function handleRejection(messageId, body) {
     return state.rewriteCache[messageId];
   }
 
-  // call proxy for rewrite
-  const rewrittenText = await callProxy(body, state.humorMode, state.intensity);
+  // call proxy for rewrite (pass streak for contextual humor)
+  const rewrittenText = await callProxy(body, state.humorMode, state.intensity, state.streak + 1); // +1 because we just incremented it
   if (!rewrittenText) return null;
 
   // cache it, cap at 20 entries

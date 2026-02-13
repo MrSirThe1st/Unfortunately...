@@ -4,10 +4,17 @@
 
 const CONFIDENCE_THRESHOLD = 0.4;
 
-// subject keywords weighted higher — more signal per hit
+// cap for weak signal contribution (prevents "thank you" spam from triggering false positive)
+const WEAK_SIGNAL_CAP = 0.3;
+
+// negation words that flip meaning when near keywords
+const NEGATIONS = ["not", "no", "never", "won't", "can't", "cannot", "unable", "regret"];
+
+// body weighted higher - actual rejection/acceptance language lives in body, not subject
+// subjects are often generic ("Update on your application", "Regarding your position")
 const WEIGHTS = {
-  subject: { strong: 0.4, weak: 0.15 },
-  body:    { strong: 0.25, weak: 0.1 },
+  subject: { strong: 0.2, weak: 0.1 },
+  body:    { strong: 0.4, weak: 0.15 },
 };
 
 const REJECTION = {
@@ -54,6 +61,16 @@ const REJECTION = {
       "will not be extending an offer",
       "have filled the position",
       "accepted another candidate",
+      // negated acceptance phrases (important!)
+      "not making an offer",
+      "unable to offer",
+      "cannot offer",
+      "won't be offering",
+      "not able to move forward",
+      "not in a position to offer",
+      "no offer at this time",
+      "not making you an offer",
+      "not extending an offer",
     ],
     weak: [
       "thank you for your interest",
@@ -102,28 +119,68 @@ const ACCEPTANCE = {
   },
 };
 
-function scoreText(text, strongKeywords, weakKeywords, strongWeight, weakWeight) {
-  const lower = text.toLowerCase();
-  let score = 0;
-  for (const kw of strongKeywords) {
-    if (lower.includes(kw)) score += strongWeight;
-  }
-  for (const kw of weakKeywords) {
-    if (lower.includes(kw)) score += weakWeight;
-  }
-  return score;
+// escape regex special chars in keyword
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-function scoreSignals(subject, body, signals) {
+// check if keyword appears as whole word/phrase (not substring)
+function matchesKeyword(text, keyword) {
+  // for multi-word phrases, escape and match the whole phrase
+  const escaped = escapeRegex(keyword);
+  // use word boundaries only at start/end of phrase
+  const regex = new RegExp(`\\b${escaped}\\b`, 'i');
+  return regex.test(text);
+}
+
+// check if keyword is negated (negation within 5 words before keyword)
+function isNegated(text, keyword) {
+  const escaped = escapeRegex(keyword);
+  // look for negation words within 5 words before the keyword
+  // pattern: (negation word) ... (up to 5 words) ... (keyword)
+  const negationPattern = NEGATIONS.map(escapeRegex).join('|');
+  const regex = new RegExp(`\\b(${negationPattern})\\b(?:\\s+\\w+){0,5}?\\s+\\b${escaped}\\b`, 'i');
+  return regex.test(text);
+}
+
+function scoreText(text, strongKeywords, weakKeywords, strongWeight, weakWeight, checkNegation = false) {
+  let strongScore = 0;
+  let weakScore = 0;
+
+  for (const kw of strongKeywords) {
+    if (matchesKeyword(text, kw)) {
+      // if checking negation and keyword is negated, skip it
+      if (checkNegation && isNegated(text, kw)) continue;
+      strongScore += strongWeight;
+    }
+  }
+
+  for (const kw of weakKeywords) {
+    if (matchesKeyword(text, kw)) {
+      // if checking negation and keyword is negated, skip it
+      if (checkNegation && isNegated(text, kw)) continue;
+      weakScore += weakWeight;
+    }
+  }
+
+  // cap weak signal contribution to prevent spam inflation
+  weakScore = Math.min(weakScore, WEAK_SIGNAL_CAP);
+
+  return strongScore + weakScore;
+}
+
+function scoreSignals(subject, body, signals, checkNegation = false) {
   return (
-    scoreText(subject, signals.subject.strong, signals.subject.weak, WEIGHTS.subject.strong, WEIGHTS.subject.weak) +
-    scoreText(body, signals.body.strong, signals.body.weak, WEIGHTS.body.strong, WEIGHTS.body.weak)
+    scoreText(subject, signals.subject.strong, signals.subject.weak, WEIGHTS.subject.strong, WEIGHTS.subject.weak, checkNegation) +
+    scoreText(body, signals.body.strong, signals.body.weak, WEIGHTS.body.strong, WEIGHTS.body.weak, checkNegation)
   );
 }
 
 export function detectEmail(subject, body) {
-  const rejection = Math.min(scoreSignals(subject, body, REJECTION), 1);
-  const acceptance = Math.min(scoreSignals(subject, body, ACCEPTANCE), 1);
+  // don't check negation for rejection (negations are explicit in rejection keywords)
+  const rejection = Math.min(scoreSignals(subject, body, REJECTION, false), 1);
+  // DO check negation for acceptance (prevents "not making an offer" from scoring positive)
+  const acceptance = Math.min(scoreSignals(subject, body, ACCEPTANCE, true), 1);
 
   // if tied or both below threshold → ambiguous, skip
   if (rejection > acceptance && rejection >= CONFIDENCE_THRESHOLD) {

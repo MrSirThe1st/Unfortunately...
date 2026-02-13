@@ -46,6 +46,26 @@ export const REACTION_IMAGES = {
   bernie_mittens: "https://i.imgur.com/sMnq55W.jpg",
   crying_maga: "https://media.giphy.com/media/gfT2hGhrI5wBME50p5/giphy.gif",
   political_disaster: "https://media.giphy.com/media/joV1k1sNOT5xC/giphy.gif",
+
+  // comedy/standup mode
+  laughing: "https://media.giphy.com/media/3oEjHI8WJv4x6UPDB6/giphy.gif",
+  mic_drop: "https://media.giphy.com/media/3o7qDQ4kcSD1PLM3BK/giphy.gif",
+  facepalm: "https://media.giphy.com/media/XsUtdIeJ0MWMo/giphy.gif",
+  awkward: "https://media.giphy.com/media/unFLKoAV3TkXe/giphy.gif",
+  dead_inside: "https://media.giphy.com/media/l4FGGafcOHmrlQxG0/giphy.gif",
+  seinfeld_shrug: "https://media.giphy.com/media/5t9wJjyHAOxvnxcPNk/giphy.gif",
+  snl_laughing: "https://media.giphy.com/media/3oEjHCWdU7F4hkcudy/giphy.gif",
+  roast: "https://media.giphy.com/media/pQmWjYrz39YAg/giphy.gif",
+
+  // drill sergeant/military mode
+  salute: "https://media.giphy.com/media/xTiTnhnM639JYZ0xXy/giphy.gif",
+  drill_sergeant: "https://media.giphy.com/media/3o6ZsZdNs3yE5l6hWM/giphy.gif",
+  boot_camp: "https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif",
+  military_yelling: "https://media.giphy.com/media/3oEjI67Egb4j8FfLTG/giphy.gif",
+  push_ups: "https://media.giphy.com/media/ZgGQeJrXRqDeDJTeQh/giphy.gif",
+  war_movie: "https://media.giphy.com/media/11StaZ9Lj74oCY/giphy.gif",
+  sergeant_pointing: "https://media.giphy.com/media/l0HlvtIPzPdt2usKs/giphy.gif",
+  full_metal_jacket: "https://media.giphy.com/media/3oEjHGnY8oB4BHVTP2/giphy.gif",
 };
 
 // fallback if tag not found
