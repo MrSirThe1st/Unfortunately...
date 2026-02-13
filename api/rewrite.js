@@ -4,7 +4,7 @@ import { buildRewritePrompt } from "../prompts/template.js";
 
 const client = new OpenAI({ apiKey: process.env.AI_API_KEY });
 
-const VALID_MODES = ["darkHumor", "meanButFair", "internet", "copium", "techDevTrauma", "trump", "comedy", "drillSergeant", "philosophy", "christian"];
+const VALID_MODES = ["darkHumor", "meanButFair", "internet", "copium", "techDevTrauma", "trump", "comedy", "drillSergeant", "music", "philosophy", "christian"];
 const MAX_CALLS = parseInt(process.env.MAX_CALLS_PER_DAY || "50", 10);
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -65,6 +65,16 @@ export default async function handler(req, res) {
   }
 
   try {
+    // 3% chance of rick roll easter egg (not for music mode - that has its own rick roll potential)
+    const shouldRickRoll = Math.random() < 0.03 && humorMode !== "music";
+    if (shouldRickRoll) {
+      return res.status(200).json({
+        rewrittenText: "[IMAGE:rick_roll]",
+        success: true,
+        isRickRoll: true
+      });
+    }
+
     const response = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [

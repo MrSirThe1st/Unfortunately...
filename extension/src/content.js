@@ -77,6 +77,27 @@ const REACTION_IMAGES = {
   sweating: "https://media.giphy.com/media/32mC2kXYWCsg0/giphy.gif",
   disaster_girl: "https://i.imgur.com/kOFsLmz.jpg",
   harold: "https://i.imgur.com/wqMWK7z.jpg",
+  // music/singers (for music mode + rick roll)
+  rick_roll: "https://media.giphy.com/media/Vuw9m5wXviFIQ/giphy.gif",
+  taylor_swift: "https://media.giphy.com/media/l0HlHFRbmaZtBRhXG/giphy.gif",
+  adele: "https://media.giphy.com/media/xULW8v7LtZrgcaGvC0/giphy.gif",
+  drake: "https://media.giphy.com/media/l0IykOsxLECVejOzm/giphy.gif",
+  eminem: "https://media.giphy.com/media/gtakVlnStZUbe/giphy.gif",
+  queen: "https://media.giphy.com/media/12R2bKfxceemNq/giphy.gif",
+  beyonce: "https://media.giphy.com/media/HFHovXXltzS7u/giphy.gif",
+  ed_sheeran: "https://media.giphy.com/media/l0HlQ6mJg4mBpwz6g/giphy.gif",
+  kanye: "https://media.giphy.com/media/l0HlFZ3c4NENSLQRi/giphy.gif",
+  billie_eilish: "https://media.giphy.com/media/SqflPBLPp6l9bHDQ1n/giphy.gif",
+  ariana_grande: "https://media.giphy.com/media/l1KVaj5UcbHwrBMqI/giphy.gif",
+  beatles: "https://media.giphy.com/media/11JTxkrmq4KGas/giphy.gif",
+  nirvana: "https://media.giphy.com/media/eidXWfiIjDsJi/giphy.gif",
+  bruno_mars: "https://media.giphy.com/media/l0MYC7DDbvqw4cYW4/giphy.gif",
+  lady_gaga: "https://media.giphy.com/media/PJjKz2xRsJG12/giphy.gif",
+  michael_jackson: "https://media.giphy.com/media/IgLIVXrBcID9cEPVPM/giphy.gif",
+  elvis: "https://media.giphy.com/media/111ebonMs90YLu/giphy.gif",
+  whitney_houston: "https://media.giphy.com/media/xT0BKqKS18L4oV7d84/giphy.gif",
+  bts: "https://media.giphy.com/media/YV5TbCWgfb4VSdYpXt/giphy.gif",
+  the_weeknd: "https://media.giphy.com/media/l4FGpPki7VwhbXvWM/giphy.gif",
 };
 
 // Gmail selectors — fallback chains for robustness
@@ -310,8 +331,12 @@ function injectRewrite(bodyEl, rewrittenText) {
 
   const wrapper = document.createElement("div");
   wrapper.className = "unf-rewrite-wrapper";
+  // check if this is just an image (rick roll easter egg)
+  const isOnlyImage = /^\[IMAGE:\w+\]$/.test(rewrittenText.trim());
+  const label = isOnlyImage ? "" : '<div class="unf-rewrite-label">unfortunately… rewrote this</div>';
+
   wrapper.innerHTML = `
-    <div class="unf-rewrite-label">unfortunately… rewrote this</div>
+    ${label}
     <div class="unf-rewrite">${parseRewriteText(rewrittenText)}</div>
     <button class="unf-show-original">show original</button>
   `;
@@ -428,8 +453,12 @@ function updateWithRewrite(container, bodyEl, rewrittenText) {
 
   const wrapper = document.createElement("div");
   wrapper.className = "unf-rewrite-wrapper";
+  // check if this is just an image (rick roll easter egg)
+  const isOnlyImage = /^\[IMAGE:\w+\]$/.test(rewrittenText.trim());
+  const label = isOnlyImage ? "" : '<div class="unf-rewrite-label">unfortunately… rewrote this</div>';
+
   wrapper.innerHTML = `
-    <div class="unf-rewrite-label">unfortunately… rewrote this</div>
+    ${label}
     <div class="unf-rewrite">${parseRewriteText(rewrittenText)}</div>
     <button class="unf-show-original">show original</button>
   `;

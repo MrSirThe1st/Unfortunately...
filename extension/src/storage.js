@@ -3,7 +3,7 @@
 //   rejectionCount: number
 //   streak: number
 //   rewriteCache: { [messageId]: rewrittenText } — last 20 rewrites
-//   humorMode: "darkHumor" | "meanButFair" | "internet" | "copium" | "techDevTrauma" | "trump" | "comedy" | "drillSergeant" | "philosophy" | "christian"
+//   humorMode: "darkHumor" | "meanButFair" | "internet" | "copium" | "techDevTrauma" | "trump" | "comedy" | "drillSergeant" | "music" | "philosophy" | "christian"
 //   intensity: "low" | "medium" | "high" | "extreme" — only for modes that support it
 
 const DEFAULTS = {
