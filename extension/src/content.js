@@ -3,6 +3,30 @@
 // extracts subject + body, sends to background for detection
 // injects rewrites on rejection, triggers celebration on acceptance
 
+// reaction image library for AI-suggested images
+const REACTION_IMAGES = {
+  crying: "https://media.giphy.com/media/d2lcHJTG5Tscg/giphy.gif",
+  sad_cat: "https://media.giphy.com/media/BEob5qwFkSJ7G/giphy.gif",
+  crying_cat: "https://media.giphy.com/media/6uGhT1O4sxpi8/giphy.gif",
+  this_is_fine: "https://media.giphy.com/media/QMHoU66sBXqqLqYvGO/giphy.gif",
+  shrug: "https://media.giphy.com/media/G4ZNYMQVMH6us/giphy.gif",
+  accepting: "https://media.giphy.com/media/92wH9E5FNKtqVMPapQ/giphy.gif",
+  skeleton_waiting: "https://media.giphy.com/media/QBd2kLB5qDmysEXre9/giphy.gif",
+  internal_screaming: "https://media.giphy.com/media/55itGuoAJiZEEen9gg/giphy.gif",
+  burning: "https://media.giphy.com/media/l0IypeKl9NJhPFMrK/giphy.gif",
+  you_got_this: "https://media.giphy.com/media/yoJC2K6rCzwNY2EngA/giphy.gif",
+  thumbs_up: "https://media.giphy.com/media/111ebonMs90YLu/giphy.gif",
+  bug: "https://media.giphy.com/media/3o7btPCcdNniyf0ArS/giphy.gif",
+  error_404: "https://media.giphy.com/media/14uQ3cOFteDaU/giphy.gif",
+  loading: "https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
+  doge: "https://media.giphy.com/media/5xtDarqlsEW6F7F14Fq/giphy.gif",
+  pepe_cry: "https://i.imgur.com/AdiBPrO.jpg",
+  wojak_crying: "https://i.imgur.com/w3duR07.png",
+  shocked: "https://media.giphy.com/media/l3q2K5jinAlChoCLS/giphy.gif",
+  thinking: "https://media.giphy.com/media/d3mlE7uhX8KFgEmY/giphy.gif",
+  celebration: "https://media.giphy.com/media/g9582DNuQppxC/giphy.gif",
+};
+
 // Gmail selectors — fallback chains for robustness
 // Prioritize stable attributes (data-*, aria) over brittle classes
 const GMAIL = {
@@ -144,6 +168,13 @@ function checkForEmails() {
 }
 
 function sendToBackground({ messageId, subject, body }, onResponse) {
+  // safety check - extension may have been reloaded
+  if (typeof chrome === "undefined" || !chrome.runtime) {
+    console.error("[unf] chrome.runtime unavailable - extension reloaded? Reload page.");
+    onResponse(null);
+    return;
+  }
+
   chrome.runtime.sendMessage(
     { type: "EMAIL_DETECTED", messageId, subject, body },
     onResponse
@@ -155,6 +186,25 @@ function escapeHtml(text) {
   const div = document.createElement("div");
   div.textContent = text;
   return div.innerHTML;
+}
+
+// parses rewrite text: escapes HTML, then replaces [IMAGE:tag] with actual images
+function parseRewriteText(text) {
+  // first escape HTML to prevent XSS
+  let escaped = escapeHtml(text);
+
+  // then replace image tags with actual img elements
+  // pattern: [IMAGE:tag_name]
+  escaped = escaped.replace(/\[IMAGE:(\w+)\]/g, (_match, tag) => {
+    const imageUrl = REACTION_IMAGES[tag];
+    if (imageUrl) {
+      return `<img src="${imageUrl}" alt="${tag}" class="unf-reaction-img">`;
+    }
+    // if tag not found, remove the tag
+    return "";
+  });
+
+  return escaped;
 }
 
 function injectRewrite(bodyEl, rewrittenText) {
@@ -170,25 +220,39 @@ function injectRewrite(bodyEl, rewrittenText) {
     }
     .unf-rewrite-label {
       font-size: 11px;
-      color: #ffffff;
-      margin-bottom: 4px;
+      color: #5f6368;
+      margin-bottom: 6px;
+      font-family: Roboto, Arial, sans-serif;
     }
     .unf-rewrite {
-      padding: 8px 12px;
-      background: #ffffff;
-      font-style: italic;
+      padding: 0;
+      background: transparent;
+      font-family: Roboto, Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #202124;
+      font-style: normal;
     }
     .unf-show-original {
       background: none;
       border: none;
       color: #a89f8e;
       font-size: 11px;
-      font-family: inherit;
+      font-family: Roboto, Arial, sans-serif;
       cursor: pointer;
       padding: 4px 0;
+      margin-top: 8px;
+      display: block;
     }
     .unf-show-original:hover {
       color: #6b6b6b;
+    }
+    .unf-reaction-img {
+      max-width: 300px;
+      max-height: 200px;
+      display: block;
+      margin: 12px 0;
+      border-radius: 4px;
     }
   `;
 
@@ -196,7 +260,7 @@ function injectRewrite(bodyEl, rewrittenText) {
   wrapper.className = "unf-rewrite-wrapper";
   wrapper.innerHTML = `
     <div class="unf-rewrite-label">unfortunately… rewrote this</div>
-    <div class="unf-rewrite">${escapeHtml(rewrittenText)}</div>
+    <div class="unf-rewrite">${parseRewriteText(rewrittenText)}</div>
     <button class="unf-show-original">show original</button>
   `;
 
@@ -252,27 +316,39 @@ function updateWithRewrite(container, bodyEl, rewrittenText) {
     }
     .unf-rewrite-label {
       font-size: 11px;
-      color: #ffffff;
-      margin-bottom: 4px;
+      color: #5f6368;
+      margin-bottom: 6px;
+      font-family: Roboto, Arial, sans-serif;
     }
     .unf-rewrite {
-      padding: 8px 12px;
-      background: #ffffff;
-      border-radius: 0 4px 4px 0;
-      font-style: italic;
-      color: #4a4a4a;
+      padding: 0;
+      background: transparent;
+      font-family: Roboto, Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #202124;
+      font-style: normal;
     }
     .unf-show-original {
       background: none;
       border: none;
       color: #a89f8e;
       font-size: 11px;
-      font-family: inherit;
+      font-family: Roboto, Arial, sans-serif;
       cursor: pointer;
       padding: 4px 0;
+      margin-top: 8px;
+      display: block;
     }
     .unf-show-original:hover {
       color: #6b6b6b;
+    }
+    .unf-reaction-img {
+      max-width: 300px;
+      max-height: 200px;
+      display: block;
+      margin: 12px 0;
+      border-radius: 4px;
     }
   `;
 
@@ -280,7 +356,7 @@ function updateWithRewrite(container, bodyEl, rewrittenText) {
   wrapper.className = "unf-rewrite-wrapper";
   wrapper.innerHTML = `
     <div class="unf-rewrite-label">unfortunately… rewrote this</div>
-    <div class="unf-rewrite">${escapeHtml(rewrittenText)}</div>
+    <div class="unf-rewrite">${parseRewriteText(rewrittenText)}</div>
     <button class="unf-show-original">show original</button>
   `;
 
@@ -342,18 +418,61 @@ function checkSelectorHealth() {
     const primaryWorks = document.querySelector(patterns[0]);
     if (!primaryWorks) {
       // check if any fallback works
-      const fallbackWorks = patterns.slice(1).some((p) => document.querySelector(p));
-      if (fallbackWorks) {
-        console.warn(`[unf] selector health: ${name} primary broken, fallback working`);
+      const fallbackIndex = patterns.slice(1).findIndex((p) => document.querySelector(p));
+      if (fallbackIndex >= 0) {
+        console.warn(`[unf] selector health: ${name} primary broken, using fallback[${fallbackIndex + 1}]: ${patterns[fallbackIndex + 1]}`);
       } else {
-        console.warn(`[unf] selector health: ${name} all patterns failed — Gmail may have updated`);
+        console.error(`[unf] selector health: ${name} all patterns failed — Gmail may have updated`);
+        console.error(`[unf] debug: run discoverSelectors() in console to find current Gmail selectors`);
       }
+    } else {
+      console.log(`[unf] selector health: ${name} working ✓`);
     }
   });
 }
 
-// run health check after short delay (Gmail needs time to render)
-setTimeout(checkSelectorHealth, 1000);
+// debugging helper — discovers current Gmail DOM structure
+// run this in console: discoverSelectors()
+window.discoverSelectors = function() {
+  console.log("[unf] === Gmail Selector Discovery ===");
+
+  // find messages with data-message-id
+  const messagesWithId = document.querySelectorAll("[data-message-id]");
+  console.log(`[unf] Found ${messagesWithId.length} elements with [data-message-id]`);
+  if (messagesWithId.length > 0) {
+    const first = messagesWithId[0];
+    console.log("[unf] First message element:", first);
+    console.log("[unf] Classes:", first.className);
+    console.log("[unf] Suggested selector:", `${first.tagName.toLowerCase()}.${first.className.split(' ').join('.')}[data-message-id]`);
+  }
+
+  // find h2 elements (likely subject)
+  const h2s = document.querySelectorAll("h2");
+  console.log(`[unf] Found ${h2s.length} h2 elements`);
+  if (h2s.length > 0) {
+    const first = h2s[0];
+    console.log("[unf] First h2:", first);
+    console.log("[unf] Text:", first.innerText);
+    console.log("[unf] Classes:", first.className);
+    const attrs = Array.from(first.attributes).map(a => `${a.name}="${a.value}"`).join(", ");
+    console.log("[unf] Attributes:", attrs);
+  }
+
+  // find email body candidates
+  console.log("[unf] Looking for email body elements (div with lots of text)...");
+  const divs = document.querySelectorAll("div[dir='ltr']");
+  console.log(`[unf] Found ${divs.length} div[dir='ltr'] elements`);
+  if (divs.length > 0) {
+    const bodyCandidate = Array.from(divs).find(d => d.innerText.length > 100);
+    if (bodyCandidate) {
+      console.log("[unf] Email body candidate:", bodyCandidate);
+      console.log("[unf] Classes:", bodyCandidate.className);
+    }
+  }
+};
+
+// run health check after longer delay (Gmail needs time to render)
+setTimeout(checkSelectorHealth, 3000);
 
 // run once on load — email may already be open
 checkForEmails();

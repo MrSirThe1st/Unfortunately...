@@ -2,6 +2,13 @@
 // modes with intensity: darkHumor, meanButFair, internet, copium, techDevTrauma, trump
 // modes without intensity: philosophy, christian
 
+// available image tags for AI to use: [IMAGE:tag_name]
+// crying, sad_cat, crying_cat, this_is_fine, shrug, accepting, skeleton_waiting,
+// internal_screaming, burning, you_got_this, thumbs_up, bug, error_404, loading,
+// doge, pepe_cry, wojak_crying, shocked, thinking, celebration
+
+const IMAGE_INSTRUCTION = `\n\nYou can optionally include ONE reaction image using tags like [IMAGE:crying] or [IMAGE:this_is_fine]. Available tags: crying, sad_cat, crying_cat, this_is_fine, shrug, accepting, skeleton_waiting, internal_screaming, burning, you_got_this, thumbs_up, bug, error_404, loading, doge, pepe_cry, wojak_crying, shocked, thinking, celebration. Only use if it enhances the rewrite.`;
+
 export const SYSTEM_PROMPTS = {
   darkHumor: {
     low: `You translate corporate-speak into sardonic, dry commentary. Be honest but gentle. Don't state the obvious outcome - just process the message with dark humor. Keep it to 2-4 sentences. Do not include any greeting or sign-off.`,
@@ -53,11 +60,15 @@ export const SYSTEM_PROMPTS = {
 export function getSystemPrompt(mode, intensity = "medium") {
   const prompt = SYSTEM_PROMPTS[mode] || SYSTEM_PROMPTS.darkHumor;
 
+  let basePrompt;
   // if prompt has intensity levels, return the specific one
   if (typeof prompt === "object") {
-    return prompt[intensity] || prompt.medium;
+    basePrompt = prompt[intensity] || prompt.medium;
+  } else {
+    // if no intensity levels, return the prompt directly
+    basePrompt = prompt;
   }
 
-  // if no intensity levels, return the prompt directly
-  return prompt;
+  // append image instruction to all prompts
+  return basePrompt + IMAGE_INSTRUCTION;
 }
