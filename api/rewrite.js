@@ -41,13 +41,16 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "method not allowed", success: false });
   }
 
-  const { text, humorMode, intensity = "medium" } = req.body || {};
+  const { text, humorMode, intensity = "medium", streak = 0 } = req.body || {};
 
   if (!text || typeof text !== "string" || text.trim().length === 0) {
     return res.status(400).json({ error: "text is required", success: false });
   }
   if (!humorMode || !VALID_MODES.includes(humorMode)) {
     return res.status(400).json({ error: "invalid humorMode", success: false });
+  }
+  if (typeof streak !== "number" || streak < 0) {
+    return res.status(400).json({ error: "invalid streak", success: false });
   }
 
   const ip = req.headers["x-forwarded-for"]?.split(",")[0] || "unknown";
@@ -66,7 +69,7 @@ export default async function handler(req, res) {
       model: "gpt-4o-mini",
       messages: [
         { role: "system", content: getSystemPrompt(humorMode, intensity) },
-        { role: "user", content: buildRewritePrompt(text.trim()) },
+        { role: "user", content: buildRewritePrompt(text.trim(), streak) },
       ],
       max_tokens: 300,
     });

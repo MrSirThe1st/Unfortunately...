@@ -71,12 +71,12 @@ async function handleAcceptance() {
   return streak;
 }
 
-async function callProxy(text, humorMode, intensity) {
+async function callProxy(text, humorMode, intensity, streak) {
   try {
     const res = await fetch(`${PROXY_URL}/api/rewrite`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, humorMode, intensity }),
+      body: JSON.stringify({ text, humorMode, intensity, streak }),
     });
     const data = await res.json();
     return data.success ? data.rewrittenText : null;
