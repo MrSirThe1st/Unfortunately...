@@ -288,15 +288,27 @@ function injectLoading(bodyEl) {
   const style = document.createElement("style");
   style.textContent = `
     .unf-loading {
-      padding: 12px;
+      padding: 12px 0;
       text-align: center;
-      font-size: 24px;
+    }
+    .unf-loading img {
+      max-width: 200px;
+      max-height: 150px;
+      display: inline-block;
     }
   `;
 
   const loading = document.createElement("div");
   loading.className = "unf-loading";
-  loading.textContent = "😂";
+  // funny loading GIFs - rotate for variety
+  const loadingGifs = [
+    "https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif", // loading dots
+    "https://media.giphy.com/media/QBd2kLB5qDmysEXre9/giphy.gif", // skeleton waiting
+    "https://media.giphy.com/media/l3q2XhfQ8oCkm1Ts4/giphy.gif", // calculating
+    "https://media.giphy.com/media/y1ZBcOGOOtlpC/giphy.gif", // typing cat
+  ];
+  const randomGif = loadingGifs[Math.floor(Math.random() * loadingGifs.length)];
+  loading.innerHTML = `<img src="${randomGif}" alt="loading...">`;
 
   shadow.appendChild(style);
   shadow.appendChild(loading);
