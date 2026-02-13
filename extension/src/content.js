@@ -25,6 +25,15 @@ const REACTION_IMAGES = {
   shocked: "https://media.giphy.com/media/l3q2K5jinAlChoCLS/giphy.gif",
   thinking: "https://media.giphy.com/media/d3mlE7uhX8KFgEmY/giphy.gif",
   celebration: "https://media.giphy.com/media/g9582DNuQppxC/giphy.gif",
+  // political/trump
+  trump_wrong: "https://media.giphy.com/media/3oz8xLd9DJq2l2VFtu/giphy.gif",
+  trump_youre_fired: "https://media.giphy.com/media/l0IylOPCNkiqOgMyA/giphy.gif",
+  trump_shrug: "https://media.giphy.com/media/l3vRfNA1p0rvhMSvS/giphy.gif",
+  biden_confused: "https://media.giphy.com/media/W5ZUxqXT1lmiysXsDE/giphy.gif",
+  obama_mic_drop: "https://media.giphy.com/media/3o7qDQ4kcSD1PLM3BK/giphy.gif",
+  bernie_mittens: "https://i.imgur.com/sMnq55W.jpg",
+  crying_maga: "https://media.giphy.com/media/gfT2hGhrI5wBME50p5/giphy.gif",
+  political_disaster: "https://media.giphy.com/media/joV1k1sNOT5xC/giphy.gif",
 };
 
 // Gmail selectors — fallback chains for robustness
@@ -296,6 +305,13 @@ function injectLoading(bodyEl) {
       max-height: 150px;
       display: inline-block;
     }
+    .unf-loading-text {
+      margin-top: 8px;
+      font-family: Roboto, Arial, sans-serif;
+      font-size: 13px;
+      color: #5f6368;
+      font-style: italic;
+    }
   `;
 
   const loading = document.createElement("div");
@@ -308,7 +324,10 @@ function injectLoading(bodyEl) {
     "https://media.giphy.com/media/y1ZBcOGOOtlpC/giphy.gif", // typing cat
   ];
   const randomGif = loadingGifs[Math.floor(Math.random() * loadingGifs.length)];
-  loading.innerHTML = `<img src="${randomGif}" alt="loading...">`;
+  loading.innerHTML = `
+    <img src="${randomGif}" alt="loading...">
+    <div class="unf-loading-text">rewriting your rejection with humor...</div>
+  `;
 
   shadow.appendChild(style);
   shadow.appendChild(loading);

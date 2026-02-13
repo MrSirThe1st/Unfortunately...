@@ -36,6 +36,16 @@ export const REACTION_IMAGES = {
   shocked: "https://media.giphy.com/media/l3q2K5jinAlChoCLS/giphy.gif",
   thinking: "https://media.giphy.com/media/d3mlE7uhX8KFgEmY/giphy.gif",
   celebration: "https://media.giphy.com/media/g9582DNuQppxC/giphy.gif",
+
+  // political/trump mode
+  trump_wrong: "https://media.giphy.com/media/3oz8xLd9DJq2l2VFtu/giphy.gif",
+  trump_youre_fired: "https://media.giphy.com/media/l0IylOPCNkiqOgMyA/giphy.gif",
+  trump_shrug: "https://media.giphy.com/media/l3vRfNA1p0rvhMSvS/giphy.gif",
+  biden_confused: "https://media.giphy.com/media/W5ZUxqXT1lmiysXsDE/giphy.gif",
+  obama_mic_drop: "https://media.giphy.com/media/3o7qDQ4kcSD1PLM3BK/giphy.gif",
+  bernie_mittens: "https://i.imgur.com/sMnq55W.jpg",
+  crying_maga: "https://media.giphy.com/media/gfT2hGhrI5wBME50p5/giphy.gif",
+  political_disaster: "https://media.giphy.com/media/joV1k1sNOT5xC/giphy.gif",
 };
 
 // fallback if tag not found
