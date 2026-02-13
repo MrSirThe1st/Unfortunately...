@@ -2,7 +2,7 @@
 // keyword matching + confidence scoring. no AI.
 // exports: detectEmail(subject, body) → { type, confidence }
 
-const CONFIDENCE_THRESHOLD = 0.5;
+const CONFIDENCE_THRESHOLD = 0.4;
 
 // subject keywords weighted higher — more signal per hit
 const WEIGHTS = {
@@ -31,15 +31,29 @@ const REJECTION = {
       "unfortunately",
       "we have decided not to",
       "not moving forward",
+      "not proceeding",
+      "will not be proceeding",
       "decided to go with another",
       "position has been filled",
       "will not be moving forward",
-      "not selected for",
+      "not selected",
+      "was not selected",
+      "were not selected",
       "went with other candidates",
       "not the right fit",
       "better suited",
       "will not be pursuing",
       "chosen not to move forward",
+      "have decided to pursue",
+      "moved to the next step",
+      "moving forward with other",
+      "not be considered further",
+      "application has been unsuccessful",
+      "regret to inform",
+      "we regret",
+      "will not be extending an offer",
+      "have filled the position",
+      "accepted another candidate",
     ],
     weak: [
       "thank you for your interest",
@@ -48,6 +62,8 @@ const REJECTION = {
       "wish you the best",
       "best of luck",
       "encourage you to apply for future",
+      "keep your resume on file",
+      "future opportunities",
     ],
   },
 };
