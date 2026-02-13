@@ -3,17 +3,19 @@
 export function buildRewritePrompt(originalText, streak = 0) {
   let context = "";
 
-  // add streak context if significant (optionally reference in humor)
+  // add streak context sparingly - don't make it the focus, just background info
   if (streak === 1) {
-    context = "\n\nContext: This is the user's first rejection.";
-  } else if (streak === 2) {
-    context = "\n\nContext: This is the user's 2nd rejection in a row.";
-  } else if (streak >= 3 && streak <= 5) {
-    context = `\n\nContext: This is the user's ${streak}th rejection in a row. You can optionally reference this streak if it adds to the humor.`;
-  } else if (streak > 5 && streak <= 10) {
-    context = `\n\nContext: This is the user's ${streak}th rejection in a row (rough streak). You can optionally reference the mounting rejections if it makes the rewrite funnier.`;
-  } else if (streak > 10) {
-    context = `\n\nContext: This is the user's ${streak}th rejection in a row (brutal streak). Feel free to acknowledge this painful milestone in your rewrite if it enhances the humor.`;
+    // first rejection - rarely worth mentioning
+    context = "";
+  } else if (streak === 2 || streak === 3) {
+    // low streak - mention but very subtle
+    context = `\n\n[Background: ${streak} rejections in a row. Don't make this the focus - only reference if it naturally fits your rewrite style.]`;
+  } else if (streak >= 4 && streak <= 7) {
+    context = `\n\n[Background: ${streak} rejections in a row. You can occasionally work this into the humor if it feels natural, but it shouldn't dominate the rewrite.]`;
+  } else if (streak >= 8 && streak <= 12) {
+    context = `\n\n[Background: ${streak} rejection streak. This is notable - you can reference it if it enhances your rewrite, but focus on the email content first.]`;
+  } else if (streak > 12) {
+    context = `\n\n[Background: ${streak} rejection streak (ouch). This milestone might be worth acknowledging depending on your mode, but still keep the email itself as the main focus.]`;
   }
 
   return `Here is the original rejection email:\n\n"${originalText}"${context}\n\nRewrite it.`;
