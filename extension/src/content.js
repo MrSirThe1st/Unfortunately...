@@ -3,13 +3,29 @@
 // extracts subject + body, sends to background for detection
 // injects rewrites on rejection, triggers celebration on acceptance
 
-// Gmail selectors — class names change periodically.
-// if detection stops working, inspect Gmail DOM and update these.
+// Gmail selectors — fallback chains for robustness
+// Prioritize stable attributes (data-*, aria) over brittle classes
 const GMAIL = {
-  messageContainer: "div.adn[data-message-id]",
-  // div.a3s.aiL = actual email body content when expanded
-  messageBody: "div.a3s.aiL",
-  threadSubject: "h2.gH",
+  messageContainer: [
+    "div.adn[data-message-id]",              // current primary
+    "div[data-message-id]",                   // fallback: drop class
+    "div[role='listitem'][data-message-id]", // ARIA-based
+    "[data-message-id]",                      // last resort: any element
+  ],
+  messageBody: [
+    "div.a3s.aiL",                            // current primary (expanded email body)
+    "div.a3s",                                // fallback: drop .aiL
+    "div[dir='ltr']",                         // structure-based (Gmail uses dir attr)
+    ".ii.gt",                                 // alternative body class pattern
+    "div[data-message-id] > div > div",      // structure fallback
+  ],
+  threadSubject: [
+    "h2.gH",                                  // current primary
+    "h2[data-legacy-thread-id]",             // stable attribute
+    "h2[role='heading']",                     // ARIA-based
+    ".hP",                                    // alternative subject class
+    "h2",                                     // last resort: any h2
+  ],
 };
 
 const MIN_BODY_LENGTH = 20; // collapsed emails are usually <10 chars ("to me")
@@ -17,8 +33,36 @@ const MIN_BODY_LENGTH = 20; // collapsed emails are usually <10 chars ("to me")
 // tracks processed message IDs this session — avoids duplicate sends
 const processed = new Set();
 
+// tries multiple selector patterns, returns first match
+function findElement(patterns, context = document) {
+  for (let i = 0; i < patterns.length; i++) {
+    const el = context.querySelector(patterns[i]);
+    if (el) {
+      if (i > 0) {
+        console.warn(`[unf] primary selector failed, using fallback[${i}]: ${patterns[i]}`);
+      }
+      return el;
+    }
+  }
+  return null;
+}
+
+// tries multiple selector patterns for all elements
+function findElements(patterns, context = document) {
+  for (let i = 0; i < patterns.length; i++) {
+    const els = context.querySelectorAll(patterns[i]);
+    if (els.length > 0) {
+      if (i > 0) {
+        console.warn(`[unf] primary selector failed, using fallback[${i}]: ${patterns[i]}`);
+      }
+      return els;
+    }
+  }
+  return [];
+}
+
 function getEmailBody(emailNode) {
-  const bodyElement = emailNode.querySelector(GMAIL.messageBody);
+  const bodyElement = findElement(GMAIL.messageBody, emailNode);
   if (!bodyElement) return null;
   const bodyText = bodyElement.innerText.trim();
   // collapsed emails too short — skip, let MutationObserver retry when expanded
@@ -26,7 +70,7 @@ function getEmailBody(emailNode) {
 }
 
 function checkForEmails() {
-  const messages = document.querySelectorAll(GMAIL.messageContainer);
+  const messages = findElements(GMAIL.messageContainer);
 
   messages.forEach((msg) => {
     const id = msg.getAttribute("data-message-id");
@@ -35,8 +79,8 @@ function checkForEmails() {
     const body = getEmailBody(msg);
     if (!body) return; // collapsed or missing, MutationObserver will retry
 
-    const bodyEl = msg.querySelector(GMAIL.messageBody);
-    const subjectEl = document.querySelector(GMAIL.threadSubject);
+    const bodyEl = findElement(GMAIL.messageBody, msg);
+    const subjectEl = findElement(GMAIL.threadSubject);
     const subject = subjectEl ? subjectEl.innerText.trim() : "";
 
     processed.add(id);
@@ -286,6 +330,30 @@ const observer = new MutationObserver(() => {
 });
 
 observer.observe(document.body, { childList: true, subtree: true });
+
+// selector health check — validates primary selectors, warns if broken
+function checkSelectorHealth() {
+  const checks = [
+    { name: "messageContainer", patterns: GMAIL.messageContainer },
+    { name: "threadSubject", patterns: GMAIL.threadSubject },
+  ];
+
+  checks.forEach(({ name, patterns }) => {
+    const primaryWorks = document.querySelector(patterns[0]);
+    if (!primaryWorks) {
+      // check if any fallback works
+      const fallbackWorks = patterns.slice(1).some((p) => document.querySelector(p));
+      if (fallbackWorks) {
+        console.warn(`[unf] selector health: ${name} primary broken, fallback working`);
+      } else {
+        console.warn(`[unf] selector health: ${name} all patterns failed — Gmail may have updated`);
+      }
+    }
+  });
+}
+
+// run health check after short delay (Gmail needs time to render)
+setTimeout(checkSelectorHealth, 1000);
 
 // run once on load — email may already be open
 checkForEmails();
