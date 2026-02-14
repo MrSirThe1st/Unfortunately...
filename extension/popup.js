@@ -2,7 +2,7 @@
 // can't import src/storage.js (not an ES module context) — reads chrome.storage.local directly
 
 const INTENSITY_MAP = ["low", "medium", "high", "extreme"];
-const MODES_WITH_INTENSITY = ["darkHumor", "meanButFair", "internet", "copium", "techDevTrauma", "trump", "comedy", "drillSergeant", "music"];
+const MODES_WITH_INTENSITY = ["darkHumor", "meanButFair", "bars", "roast", "mainCharacter", "micDrop", "confidenceDelusion", "rejectionFreestyle", "trump", "comedy", "drillSergeant", "music"];
 
 async function renderStats() {
   const { rejectionCount = 0, streak = 0 } = await chrome.storage.local.get([

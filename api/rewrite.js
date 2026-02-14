@@ -4,7 +4,7 @@ import { buildRewritePrompt } from "../prompts/template.js";
 
 const client = new OpenAI({ apiKey: process.env.AI_API_KEY });
 
-const VALID_MODES = ["darkHumor", "meanButFair", "internet", "copium", "techDevTrauma", "trump", "comedy", "drillSergeant", "music", "philosophy", "christian"];
+const VALID_MODES = ["darkHumor", "meanButFair", "bars", "roast", "mainCharacter", "micDrop", "confidenceDelusion", "rejectionFreestyle", "trump", "comedy", "drillSergeant", "music", "christian"];
 const MAX_CALLS = parseInt(process.env.MAX_CALLS_PER_DAY || "50", 10);
 const DAY_MS = 24 * 60 * 60 * 1000;
 

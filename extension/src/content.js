@@ -98,6 +98,42 @@ const REACTION_IMAGES = {
   whitney_houston: "https://media.giphy.com/media/xT0BKqKS18L4oV7d84/giphy.gif",
   bts: "https://media.giphy.com/media/YV5TbCWgfb4VSdYpXt/giphy.gif",
   the_weeknd: "https://media.giphy.com/media/l4FGpPki7VwhbXvWM/giphy.gif",
+  // roast/burn reactions
+  oh_snap: "https://media.giphy.com/media/AJwnLEsQyT9oA/giphy.gif",
+  burn: "https://media.giphy.com/media/pQmWjYrz39YAg/giphy.gif",
+  savage: "https://media.giphy.com/media/r1HGFou3mUwMw/giphy.gif",
+  destroyed: "https://media.giphy.com/media/3o7TKnO6Wve6502iJ2/giphy.gif",
+  shots_fired: "https://media.giphy.com/media/AoBgxayGMBSUM/giphy.gif",
+  // confidence/mic drop
+  sunglasses: "https://media.giphy.com/media/Z6f7diem1mfkY/giphy.gif",
+  deal_with_it: "https://media.giphy.com/media/uh2LGo3vYKEd6/giphy.gif",
+  boss: "https://media.giphy.com/media/L9AjOzvRSkpI3myNpP/giphy.gif",
+  unbothered: "https://media.giphy.com/media/jsm8eWdudTNrO/giphy.gif",
+  too_cool: "https://media.giphy.com/media/xTiTnAnLLwnJfDHBSg/giphy.gif",
+  walk_away: "https://media.giphy.com/media/fwcGzF1l2cILe/giphy.gif",
+  // main character/dramatic
+  dramatic: "https://media.giphy.com/media/3o7TKTDn976rzVgky4/giphy.gif",
+  hero_moment: "https://media.giphy.com/media/QWkp3pjhZXbaw/giphy.gif",
+  chosen_one: "https://media.giphy.com/media/pz6sZAv0bBBJK/giphy.gif",
+  protagonist: "https://media.giphy.com/media/l2Sq29cFXoF80ADlK/giphy.gif",
+  slow_motion: "https://media.giphy.com/media/6Egwsh3yVn5kY/giphy.gif",
+  // rap/bars/freestyle
+  rapper: "https://media.giphy.com/media/l0IylOPCNkiqOgMyA/giphy.gif",
+  drop_mic_obama: "https://media.giphy.com/media/3o7qDQ4kcSD1PLM3BK/giphy.gif",
+  rap_battle: "https://media.giphy.com/media/Wp0ZKTYcZCNCQ6fDRV/giphy.gif",
+  bars: "https://media.giphy.com/media/u7BzVu6kmpIpa/giphy.gif",
+  fire_bars: "https://media.giphy.com/media/l0HlyheZJsgVjICHK/giphy.gif",
+  // extra reactions
+  popcorn: "https://media.giphy.com/media/pUeXcg80cO8I8/giphy.gif",
+  yikes: "https://media.giphy.com/media/32mC2kXYWCsg0/giphy.gif",
+  oof: "https://media.giphy.com/media/3og0IIIZVBYJ4ysssU/giphy.gif",
+  cringe: "https://media.giphy.com/media/l4FGni1RBAR2OWsGk/giphy.gif",
+  whoa: "https://media.giphy.com/media/xT0xeJpnrWC4XWblEk/giphy.gif",
+  sassy: "https://media.giphy.com/media/Mab1lyzb70X0YiNLUj/giphy.gif",
+  nope: "https://media.giphy.com/media/POql6zsXZbmcE/giphy.gif",
+  not_impressed: "https://media.giphy.com/media/UnyGF7evFkN04X24tI/giphy.gif",
+  side_eye: "https://media.giphy.com/media/26gR0YwQ6AfCqF8hq/giphy.gif",
+  judging: "https://media.giphy.com/media/lXiRJ8IRz5QH6wTQc/giphy.gif",
 };
 
 // Gmail selectors — fallback chains for robustness
